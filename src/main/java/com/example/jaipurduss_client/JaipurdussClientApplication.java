@@ -25,6 +25,7 @@ public class JaipurdussClientApplication extends Application {
 	public void start(Stage stage) throws IOException {
 		FXMLLoader fxmlLoader = new FXMLLoader(JaipurdussClientApplication.class.getResource("/jaipurduss_client/DbDownloads.fxml"));
 		Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+
 		stage.setMaximized(true);
 		stage.setTitle("Download Society");
 		stage.setScene(scene);
