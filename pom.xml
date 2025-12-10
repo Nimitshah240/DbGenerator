@@ -27,6 +27,7 @@
         <url/>
     </scm>
     <properties>
+
         <java.version>11</java.version>
         <javafx.version>11.0.2</javafx.version>
         <spring.version>2.7.18</spring.version>

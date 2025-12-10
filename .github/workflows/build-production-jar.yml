@@ -1,4 +1,4 @@
-name: Build Production JAR on Merge
+name: Build Productions JAR on Merges
 
 on:
   push:
