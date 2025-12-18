@@ -11,7 +11,7 @@
     <groupId>com.example</groupId>
     <artifactId>DB-Generator-Jaipur</artifactId>
     <version>1.0.0</version>
-    <name>DB-Generator-Jaipur</name>
+    <name>DB-Generator-Jaipur-DEV</name>
     <description>Demo project for Spring Boot</description>
     <url/>
     <licenses>
