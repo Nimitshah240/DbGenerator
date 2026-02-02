@@ -3,6 +3,7 @@ package com.example.jaipurduss_client.controller;
 import com.example.jaipurduss_client.controls.MyInitialization;
 import com.example.jaipurduss_client.task.DbBackupTask;
 import com.example.jaipurduss_client.task.FetchDbTask;
+import com.example.jaipurduss_client.task.GetUrlTask;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -33,7 +34,7 @@ import static com.example.jaipurduss_client.JaipurdussClientApplication.context;
 
 public class DbDownloadController implements MyInitialization {
     @FXML
-    private TextField txtSociety, txtMobile, txtBackupPath;
+    private TextField txtSociety, txtMobile, txtBackupPath, txtClientCode;
 
     @FXML
     private Button btnClose, btnDownload, btnBrowse;
@@ -67,6 +68,8 @@ public class DbDownloadController implements MyInitialization {
                 statusStep = (statusStep + 1) % statuses1.length;
             })
     );
+    String societyCode;
+    String mobileText;
 
     @Override
     public Node getRoot() {
@@ -76,7 +79,7 @@ public class DbDownloadController implements MyInitialization {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         btnDownload.setOnAction(e -> {
-            downloadSql();
+            getUrlData();
         });
 
         btnBrowse.setOnAction(e -> {
@@ -103,21 +106,62 @@ public class DbDownloadController implements MyInitialization {
         }
     }
 
-    public void downloadSql() {
+    public void getUrlData() {
         try {
-            String societyCode = txtSociety.getText();
-            String mobileText = txtMobile.getText();
+            String clientCodeText = txtClientCode.getText();
+            societyCode = txtSociety.getText();
+            mobileText = txtMobile.getText();
+
+            if (clientCodeText == null || clientCodeText.isBlank() ||
+                    societyCode == null || societyCode.isEmpty() ||
+                    mobileText == null || mobileText.isEmpty()) {
+                setStatus("Please enter data !", Color.RED);
+                return;
+            }
+
+            var task = new GetUrlTask(clientCodeText);
+
+            task.setOnSucceeded(e -> {
+                try {
+                    String url = task.get();
+                    if (url == null || url.isEmpty()) {
+                        System.out.println("NO URL FOUND");
+                        setStatus("No Society Found!", Color.RED);
+                    } else {
+                        System.out.println("STARTING DB DOWNLOAD");
+                        downloadSql(url);
+                    }
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            task.setOnFailed(f -> {
+                Platform.runLater(() -> {
+                    setStatus("Error Occured!", Color.RED);
+                });
+            });
+            new Thread(task).start();
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void downloadSql(String url) {
+        try {
+
             timeline1.setCycleCount(Timeline.INDEFINITE);
             timeline1.play();
 
-            var task = new FetchDbTask(societyCode, mobileText);
+            var task = new FetchDbTask(societyCode, mobileText, url);
             task.setOnSucceeded(e -> {
                 try {
                     timeline1.stop();
                     byte[] zipContent = task.get();
                     if (zipContent == null) {
+                        System.out.println("No Society Found");
                         setStatus("No Society Found!", Color.RED);
                     } else {
+                        System.out.println("FOUND SQL FILE WITH SOCIETY CODE : " + societyCode);
                         savingZipFile(zipContent, societyCode);
                     }
                 } catch (Exception ex) {
@@ -126,6 +170,7 @@ public class DbDownloadController implements MyInitialization {
             });
             task.setOnFailed(f -> {
                 Platform.runLater(() -> {
+                    System.out.println("SOMETHING WENT WRONG!!");
                     setStatus("Error Occured!", Color.RED);
                     timeline1.stop();
                 });
