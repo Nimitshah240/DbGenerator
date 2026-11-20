@@ -35,7 +35,7 @@ public class GetUrlTask extends Task<String>{
                 String url = "";
                 if (vendorUrl != null) {
                     String[] partsUrl = vendorUrl.split("#");
-                    url = partsUrl[1];
+                    url = partsUrl[2];
                 }
                 return url;
             }
