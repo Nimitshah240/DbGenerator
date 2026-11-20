@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>DB-Generator-Jaipur</artifactId>
-    <version>1.0.0</version>
+    <version>1.3.0</version>
     <name>DB-Generator-Jaipur-PRO</name>
     <description>Demo project for Spring Boot</description>
     <url/>
