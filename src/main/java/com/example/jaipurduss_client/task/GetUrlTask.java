@@ -13,12 +13,13 @@ import java.util.Map;
 
 import static com.example.jaipurduss_client.JaipurdussClientApplication.context;
 
-public class GetUrlTask extends Task<String>{
+public class GetUrlTask extends Task<String> {
     private final String clientCode;
 
     public GetUrlTask(String clientCode) {
         this.clientCode = clientCode;
     }
+    String url = "http://192.168.1.41:6375/eipl-amcs-processor/";
 
     @Override
     protected String call() throws Exception {
@@ -32,7 +33,6 @@ public class GetUrlTask extends Task<String>{
                 ResponseDto respBody = response.getBody();
                 Map<String, Object> dataMap = respBody.getData();
                 String vendorUrl = (String) dataMap.get("vendorUrl");
-                String url = "";
                 if (vendorUrl != null) {
                     String[] partsUrl = vendorUrl.split("#");
                     url = partsUrl[2];
